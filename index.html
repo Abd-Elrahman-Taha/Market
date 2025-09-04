@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cashier System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif;}
+    body {background: #f4f6f9; color: #333;}
+    header {background: #1e1e2f; padding: 15px 30px; display: flex; align-items: center; color: #fff;}
+    header img {width: 50px; margin-right: 10px;}
+    header h1 {font-size: 22px; font-weight: 600;}
+    nav {background: #27293d; padding: 12px 30px;}
+    nav ul {list-style: none; display: flex; gap: 25px;}
+    nav ul li a {text-decoration: none; color: #ddd; font-weight: 500; transition: 0.3s;}
+    nav ul li a:hover, nav ul li a#home {color: #fff; border-bottom: 2px solid #00c6ff;}
+    main {max-width: 1100px; margin: 40px auto; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+    h2 {margin-bottom: 20px; color: #444;}
+    form {display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;}
+    form input, form select {padding: 10px; border-radius: 6px; border: 1px solid #ccc; flex: 1; font-size: 14px;}
+    #insert {background: linear-gradient(45deg, #00c6ff, #0072ff); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; transition: 0.3s; font-size: 14px;}
+    #insert:hover {opacity: 0.9; transform: translateY(-2px);}
+    table {width: 100%; border-collapse: collapse; margin-bottom: 20px;}
+    table th, table td {padding: 12px; border-bottom: 1px solid #eee; text-align: center; font-size: 14px;}
+    table th {background: #f1f1f1; font-weight: 600;}
+    .total {text-align: right; font-size: 18px; font-weight: bold; color: #0072ff;}
+    footer {text-align: center; padding: 15px; background: #1e1e2f; color: #ccc; margin-top: 40px; font-size: 14px;}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div style="display: flex; align-items: center;">
+      <img src="Troubleshooting, repairs, and upgrades_installs.jpeg" alt="Logo">
+      <h1>DELL Cashier System</h1>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <li><a href="Page1.html" id="home">Home</a></li>
+      <li><a href="Page2.html">Products</a></li>
+      <li><a href="Page3.html">Orders</a></li>
+      <li><a href="Page4.html">Customers</a></li>
+      <li><a href="Page5.html">Reports</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main -->
+  <main>
+    <h2>Cashier - Add Customer Order</h2>
+
+    <!-- Form -->
+    <form id="trform">
+      <input type="number" id="quantity" placeholder="Quantity" min="1" required />
+      <input type="text" id="Name" placeholder="Customer Name" required />
+
+      <select id="product" required>
+        <option value="" disabled selected>Choose product</option>
+        <option value="Laptop">Laptop</option>
+        <option value="Keyboard">Keyboard</option>
+        <option value="Tablet">Tablet</option>
+        <option value="Computer">Computer</option>
+        <option value="Monitor">Monitor</option>
+        <option value="Mouse">Mouse</option>
+        <option value="Headphones">Headphones</option>
+        <option value="Printer">Printer</option>
+        <option value="Scanner">Scanner</option>
+        <option value="Hard Disk">Hard Disk</option>
+      </select>
+
+      <input type="number" id="Price" placeholder="Price" readonly required />
+      <button type="button" id="insert">Add Receipt</button>
+    </form>
+
+    <!-- Table -->
+    <table id="tab">
+      <tr>
+        <th>Quantity</th>
+        <th>Customer Name</th>
+        <th>Product</th>
+        <th>Total Price</th>
+      </tr>
+    </table>
+
+    <!-- Total -->
+    <div class="total">
+      Total Price: <span id="TotalPrice">0</span> $
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Developed by Abd El-Rahman Taha</p>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    window.onload = function () {
+      // Product price list
+      const productPrices = {
+        "Laptop": 1200,
+        "Keyboard": 50,
+        "Tablet": 400,
+        "Computer": 1000,
+        "Monitor": 300,
+        "Mouse": 25,
+        "Headphones": 80,
+        "Printer": 200,
+        "Scanner": 150,
+        "Hard Disk": 90
+      };
+
+      let currentCustomer = ""; // track current customer
+
+      // Auto fill price
+      document.getElementById("product").addEventListener("change", function () {
+        const selected = this.value;
+        document.getElementById("Price").value = productPrices[selected] || "";
+      });
+
+      // Add receipt
+      document.getElementById("insert").addEventListener("click", function () {
+        const quantity = parseInt(document.getElementById("quantity").value);
+        const name = document.getElementById("Name").value.trim();
+        const product = document.getElementById("product").value;
+        const price = parseInt(document.getElementById("Price").value);
+
+        if (!quantity || !name || !product || !price) {
+          alert("Please fill all fields!");
+          return;
+        }
+
+        // If customer changes, reset table and total
+        if (currentCustomer !== "" && currentCustomer !== name) {
+          document.getElementById("tab").innerHTML = `
+            <tr>
+              <th>Quantity</th>
+              <th>Customer Name</th>
+              <th>Product</th>
+              <th>Total Price</th>
+            </tr>`;
+          document.getElementById("TotalPrice").textContent = "0";
+        }
+
+        currentCustomer = name;
+
+        const row = document.getElementById("tab").insertRow(-1);
+        row.insertCell(0).textContent = quantity;
+        row.insertCell(1).textContent = name;
+        row.insertCell(2).textContent = product;
+        row.insertCell(3).textContent = price * quantity;
+
+        // Update total
+        const totalEl = document.getElementById("TotalPrice");
+        let total = parseInt(totalEl.textContent);
+        total += price * quantity;
+        totalEl.textContent = total;
+
+        // Reset form
+        document.getElementById("trform").reset();
+      });
+    };
+  </script>
+</body>
+</html>
